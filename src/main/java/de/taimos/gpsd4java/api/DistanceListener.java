@@ -29,7 +29,7 @@ import de.taimos.gpsd4java.types.TPVObject;
  * @author thoeger
  */
 public abstract class DistanceListener extends ObjectListener {
-	
+
 	private TPVObject lastPosition;
 	
 	private final double threshold;
@@ -43,7 +43,29 @@ public abstract class DistanceListener extends ObjectListener {
 	
 	@Override
 	public void handleTPV(final TPVObject tpv) {
-		if ((this.lastPosition == null) || (GISTool.getDistance(tpv, this.lastPosition) > this.threshold)) {
+		boolean locationChanged = false;
+		// true when it's the first time we get a location fix
+		if(tpv == null) {
+			locationChanged = false;
+		}
+		else if(this.lastPosition == null) {
+			locationChanged = true;
+		}
+		// true when we a 2D-fix to a 3D-fix transition
+		else if(Double.isNaN(this.lastPosition.getAltitude()) && !Double.isNaN(tpv.getAltitude())) {
+			locationChanged = true;
+		}
+		// else true when the distance is greater than threshold
+		else {
+			if(GISTool.getDistance(tpv, this.lastPosition) > this.threshold) {
+				locationChanged = true;
+			}
+			else {
+				locationChanged = false;
+			}
+		}
+		
+		if(locationChanged) {
 			this.lastPosition = tpv;
 			this.handleLocation(tpv);
 		}
