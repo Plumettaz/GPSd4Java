@@ -1,3 +1,7 @@
 /target
 gpsd4java.iml
 .idea
+/build/
+/.settings/
+/.classpath
+/.project

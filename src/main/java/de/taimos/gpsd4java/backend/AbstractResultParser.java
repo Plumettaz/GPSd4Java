@@ -101,12 +101,22 @@ public abstract class AbstractResultParser {
 			AbstractResultParser.LOG.debug(fieldName + ": {}", text);
 			
 			if (text != null) {
-				final Date date = this.dateFormat.parse(text);
-				if (AbstractResultParser.LOG.isDebugEnabled()) {
-					final String ds = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(date);
-					AbstractResultParser.LOG.debug("Date: {}", ds);
+				try {
+					final Date date = this.dateFormat.parse(text);
+					if (AbstractResultParser.LOG.isDebugEnabled()) {
+						final String ds = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(date);
+						AbstractResultParser.LOG.debug("Date: {}", ds);
+					}
+					return date.getTime() / 1000.0;
 				}
-				return date.getTime() / 1000.0;
+				// I some time get the activated value as a double timestamp, so I parse it that way when it fails
+				// to parse as a date. When both parsing fail, the final englobing try will catch the exception and
+				// return NaN.
+				catch(java.text.ParseException ex) {
+					final double stamp = Double.parseDouble(text);
+					AbstractResultParser.LOG.debug("Datestamp: {}", stamp);
+					return stamp;
+				}
 			}
 		} catch (final Exception ex) {
 			AbstractResultParser.LOG.info("Failed to parse time", ex);
