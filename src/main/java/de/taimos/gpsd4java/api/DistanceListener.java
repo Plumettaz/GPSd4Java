@@ -47,10 +47,10 @@ public abstract class DistanceListener extends ObjectListener {
 	public void handleTPV(final TPVObject tpv) {
 		boolean locationChanged = false;
 		// true when it's the first time we get a location fix
-		if(tpv == null) {
+		if(tpv == null || Double.isNaN(tpv.getLatitude())) {
 			locationChanged = false;
 		}
-		else if(this.lastPosition == null) {
+		else if(this.lastPosition == null || Double.isNaN(this.lastPosition.getLatitude())) {
 			locationChanged = true;
 		}
 		// true when we a 2D-fix to a 3D-fix transition
