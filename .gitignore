@@ -5,3 +5,4 @@ gpsd4java.iml
 /.settings/
 /.project
 /.classpath
+/bin/
