@@ -113,7 +113,13 @@ public abstract class AbstractResultParser {
 				// to parse as a date. When both parsing fail, the final englobing try will catch the exception and
 				// return NaN.
 				catch(java.text.ParseException ex) {
-					final double stamp = Double.parseDouble(text);
+					double stamp = Double.NaN;
+					try {
+						stamp = Double.parseDouble(text);
+					}
+					catch(NumberFormatException ex2) {
+						// stamp will stay NaN when this execption occure, nothing more to do
+					}
 					AbstractResultParser.LOG.debug("Datestamp: {}", stamp);
 					return stamp;
 				}
